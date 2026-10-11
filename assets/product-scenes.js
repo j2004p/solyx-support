@@ -17,7 +17,7 @@ function rounded(w, h, r) {
 }
 
 // Real screenshots mapped onto a bevelled device, rendered only on scroll.
-document.querySelectorAll(".product-phone").forEach((figure, index) => {
+function createPhone(figure, index) {
   figure.setAttribute("role", "img");
   figure.setAttribute("aria-label", figure.querySelector("img").alt);
   figure.querySelector("img").alt = "";
@@ -151,7 +151,17 @@ document.querySelectorAll(".product-phone").forEach((figure, index) => {
   addEventListener("scroll", schedule, { passive: true });
   document.addEventListener("visibilitychange", schedule);
   reduced.addEventListener("change", schedule);
-});
+}
+
+const phoneFigures = [...document.querySelectorAll(".product-phone")];
+const phoneLoader = new IntersectionObserver((entries, observer) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    observer.unobserve(entry.target);
+    createPhone(entry.target, phoneFigures.indexOf(entry.target));
+  }
+}, { rootMargin: "300px" });
+phoneFigures.forEach(figure => phoneLoader.observe(figure));
 
 // Catalog geometry from Solyx's ConstellationTemplateLibrary, not invented art.
 const patterns = [

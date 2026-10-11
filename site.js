@@ -1,8 +1,11 @@
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const statement = document.querySelector("[data-scroll-words]");
 const words = statement.textContent.trim().split(/\s+/);
-statement.setAttribute("aria-label", words.join(" "));
+const accessibleStatement = document.createElement("span");
+accessibleStatement.className = "sr-only";
+accessibleStatement.textContent = words.join(" ");
 statement.replaceChildren(
+  accessibleStatement,
   ...words.map((word) => {
     const span = document.createElement("span");
     span.textContent = word + " ";
@@ -13,7 +16,7 @@ statement.replaceChildren(
 let queued = false;
 const story = statement.closest("section");
 const stage = story.querySelector(".scroll-story-stage");
-const wordElements = [...statement.children];
+const wordElements = [...statement.querySelectorAll('[aria-hidden="true"]')];
 function paintScroll() {
   queued = false;
   const rect = story.getBoundingClientRect();
@@ -27,7 +30,7 @@ function paintScroll() {
       );
   wordElements.forEach((word, index) => {
     const light = Math.max(0, Math.min(1, progress * words.length - index));
-    const c = Math.round(52 + light * 192);
+    const c = Math.round(148 + light * 96);
     word.style.color = `rgb(${c} ${c} ${c})`;
   });
 }

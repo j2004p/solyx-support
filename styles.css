@@ -111,6 +111,23 @@ a:hover {
 .skip-link:focus {
   top: 8px;
 }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.brand,
+.nav-download,
+.shell nav a,
+.footer-links a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
 .site-header {
   height: 80px;
   width: min(1320px, calc(100% - 64px));
@@ -172,14 +189,14 @@ a:hover {
   mask-image: linear-gradient(to bottom, #000 58%, rgba(0, 0, 0, 0.85) 72%, rgba(0, 0, 0, 0.35) 88%, transparent 100%);
 }
 .galaxy-art {
-  visibility: hidden;
+  visibility: visible;
   position: absolute;
   left: 50%;
   top: 125px;
   width: 1100px;
   height: 1100px;
   transform: translateX(-50%);
-  background: url("./assets/galaxy.png") center 51% / 1100px auto no-repeat;
+  background: url("./assets/galaxy-fallback-20261011.webp") center 51% / 1100px auto no-repeat;
   mask-image: linear-gradient(
     to bottom,
     transparent,
@@ -199,6 +216,9 @@ a:hover {
 .galaxy-ready .galaxy-canvas {
   opacity: 1;
 }
+.galaxy-ready .galaxy-art {
+  visibility: hidden;
+}
 .galaxy-unavailable .galaxy-art {
   visibility: visible;
 }
@@ -216,6 +236,8 @@ a:hover {
   line-height: 1;
 }
 .hero-statement {
+  max-width: 480px;
+  margin-inline: auto;
   font-size: 36px;
   font-weight: 600;
   line-height: 1.12;
@@ -588,6 +610,7 @@ details[open] p {
 }
 .document p,
 .document li {
+  overflow-wrap: anywhere;
   font-size: 17px;
   line-height: 1.7;
   color: var(--muted);

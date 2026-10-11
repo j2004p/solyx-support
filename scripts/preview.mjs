@@ -10,6 +10,9 @@ const types = {
   ".css": "text/css",
   ".js": "text/javascript",
   ".png": "image/png",
+  ".webp": "image/webp",
+  ".jpg": "image/jpeg",
+  ".xml": "application/xml",
   ".svg": "image/svg+xml",
   ".ttf": "font/ttf",
 };
@@ -24,6 +27,8 @@ createServer(async (request, response) => {
         "/index.html",
         "/styles.css",
         "/site.js",
+        "/robots.txt",
+        "/sitemap.xml",
         "/privacy/index.html",
         "/support/index.html",
         "/confirmed/index.html",
