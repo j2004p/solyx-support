@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
 const sharp = require('sharp');
 
 const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4186';
-const output = path.resolve(__dirname, '../qa/2026-10-11-release');
+const output = path.resolve(process.env.AUDIT_OUTPUT || path.join(__dirname, '../qa/2026-10-11-release'));
 let browser;
 (async () => {
   await fs.mkdir(output, { recursive: true });
@@ -57,7 +57,7 @@ let browser;
     await page.waitForTimeout(1500);
     await check(`${width}: catalog populated`, async () => assert.ok(await page.locator('.collection-item').count() > 0));
     await page.getByText('Is Solyx free?', { exact: true }).click();
-    await check(`${width}: FAQ opens with upcoming price`, async () => {
+    await check(`${width}: FAQ opens with launch price`, async () => {
       assert.match(await page.locator('details[open]').innerText(), /\$79\.99 USD/);
     });
     if ([390, 1440].includes(width)) {

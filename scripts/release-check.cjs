@@ -47,6 +47,10 @@ const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4186';
     assert.match(text, /\$79\.99 USD/);
     assert.doesNotMatch(text, /forthcoming|coming|not available yet/i);
   });
+  await check('account FAQ includes purchase analytics rather than subscription-only analytics', async () => {
+    const text = (await page.locator('.faq-list').textContent()).replace(/\s+/g, ' ');
+    assert.match(text, /RevenueCat manages purchase access and limited purchase analytics/);
+  });
   await check('distant screenshot textures are deferred', async () => {
     assert.ok(!screenshots.some(url => /reveal|archive|mission-control/.test(url)));
     assert.equal(screenshots.length, new Set(screenshots).size);
@@ -74,6 +78,25 @@ const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4186';
       assert.match(text, /including subscriptions and Lifetime access/);
       assert.match(text, /retrieve purchase options/);
       assert.doesNotMatch(text, /subscription access/);
+      assert.match(text, /limited purchase analytics/);
+      assert.match(text, /measure purchase performance/);
+      assert.match(text, /paywall views lead to purchases/);
+      assert.match(text, /onboarding or subscription renewal/);
+    });
+  }
+  for (const route of ['/', '/support/', '/privacy/', '/confirmed/']) {
+    await page.goto(base + route);
+    await check(`${route} content and metadata have no subscription-only product claims`, async () => {
+      const text = await page.evaluate(() => [
+        document.body.textContent,
+        ...[...document.querySelectorAll('meta[content]')].map(el => el.content),
+        ...[...document.querySelectorAll('script[type="application/ld+json"]')].map(el => JSON.stringify(JSON.parse(el.textContent))),
+      ].join(' ').replace(/\s+/g, ' '));
+      assert.doesNotMatch(text, /subscription required|Solyx requires a.*subscription|subscription-only|subscription options|subscription access|limited subscription analytics|subscription offer(?:ing)?|paywall views lead to subscriptions/i);
+    });
+    if (route === '/support/') await check('subscription cancellation and standard Terms remain accurate', async () => {
+      assert.match(await page.locator('main').innerText(), /manage or cancel a subscription from your Apple Account subscription settings/);
+      assert.equal(await page.getByRole('link', { name: 'Terms of Use' }).getAttribute('href'), 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/');
     });
   }
   const noJS = await browser.newPage({ javaScriptEnabled: false });

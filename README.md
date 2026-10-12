@@ -9,8 +9,9 @@ until the coordinated app release is verified. Homepage, support and privacy now
 contain final launch copy, including Lifetime; that copy is NOT evidence that
 Lifetime is already available. No copy edits are deferred to launch day.
 See `RELEASE-READINESS-2026-10-11.md` for evidence and remaining release gates.
-This preparation agent must not commit, push or deploy. The parent may commit
-after review; a commit is not deployment approval.
+The final consistency audit is authorized to commit verified, scoped website
+changes and push only `origin/website/app-store-launch`. Neither that commit nor
+the branch push authorizes publication. Do not push to either publishing `main`.
 
 Use `node scripts/release-check.cjs --preview` for local validation. The default
 release check exits 2 unless the operator supplies

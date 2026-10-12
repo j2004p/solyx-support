@@ -2,9 +2,10 @@
 
 Status: **NOT DEPLOYED. FINAL LAUNCH COPY PREPARED LOCALLY.**
 
-Do not publish until the coordinated release gate is satisfied. The preparation
-agent must not commit, push or deploy; the parent may commit after review.
-Committing does not authorize publication.
+Do not publish until the coordinated release gate is satisfied. The user has
+authorized the final consistency audit to commit verified scoped website changes
+and push only `origin/website/app-store-launch`. Committing or pushing this
+non-publishing branch does not authorize publication.
 
 ## Ownership and baseline
 
@@ -13,8 +14,10 @@ Committing does not authorize publication.
   worktree, branch `website/app-store-launch`, baseline `9cfdb79`.
 - The main website checkout contains earlier dirty work and was not changed.
   The existing untracked `.DS_Store` in this worktree was also left alone.
-- No iOS files, simulator actions, Store configuration, purchases, public uploads,
-  paid services, new dependencies, commits, pushes, or deployments.
+- Initial preparation made no commits or pushes. Across both passes, no iOS file
+  changes, simulator actions, Store configuration, purchases, paid services, new
+  dependencies or deployments. The final audit's scoped commit/branch push is
+  separately authorized; production remains unchanged.
 - Read website DESIGN.md and README plus Solyx product/design/toolkit guidance.
   Impeccable context launcher was not executable; existing context was read
   directly. Approved galaxy, typography, sequential phones and catalog remain.
@@ -22,6 +25,73 @@ Committing does not authorize publication.
   108 counts, and subscription-only copy. That public site was not changed.
 
 ## Prepared changes
+
+### Final Lifetime consistency audit
+
+The follow-up begins at parent-reviewed commit `5c66db8`. The only remaining
+customer-facing mismatches were subscription-only analytics terminology in the
+account FAQ and privacy policy. These now say purchase analytics, purchase
+performance, purchase offer/offering, and conversions to purchases. Read-only
+inspection of `PremiumEntitlementService.recordPaywallImpression` confirmed the
+event uses the displayed offering shared by the available purchase packages; no
+new tracking behavior or fields are claimed or introduced.
+
+| Surface | Result |
+| --- | --- |
+| Homepage pricing FAQ and download note | Monthly/yearly OR $79.99 USD one-time Lifetime, localized in-app pricing; eligible yearly trial only |
+| Homepage account FAQ | Purchase access and limited purchase analytics, no subscription-only implication |
+| Support | Restore applies to subscriptions and Lifetime; cancellation applies to subscriptions; Lifetime does not renew |
+| Privacy purchases, analytics and retention | Purchase-wide terminology; subscription renewal remains a valid specific example; same event fields, exclusions, retention claims and effective date |
+| Terms | No local custom Terms document. Both links retain Apple's standard EULA; no subscription-only terms hosted here |
+| Metadata and structured data | All four HTML routes audited, including meta content. No JSON-LD, microdata pricing or subscription-only offer schema present; none invented |
+| Legacy confirmation, robots and sitemap | No paid-plan claims or subscription-only assumptions requiring changes |
+| Approved product images | Unchanged; website QA captures are separate from source app screenshots |
+
+The [Apple standard EULA](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)
+was read directly; its Scope of License covers content/services purchased within
+the app rather than restricting the license to subscriptions. No replacement
+legal terms or additional legal promises were drafted.
+
+GitHub API verification confirms both repositories publish Pages from `main` at
+`/`: `origin` is `j2004p/solyx-support`; `org` is
+`solyxapp/solyxapp.github.io` (the `solyxapp.com` site). Origin's only listed
+workflow is the generated Pages build/deployment workflow. The authorized push
+target is explicitly `origin HEAD:refs/heads/website/app-store-launch`, never
+either `main`, and not `org`. The dirty primary checkout remains untouched.
+
+Content is ready for the coordinated release, but **NOT DEPLOYED** and not a
+claim that the app/Lifetime are live. Remaining deployment steps are:
+
+1. Independently verify the new app and Lifetime product are live, localized
+   prices are correct, and production purchase/restore/access behavior passes.
+2. Run `SOLYX_RELEASE_CONFIRMED=app-and-lifetime-live node scripts/release-check.cjs`
+   against the reviewed local build. This is an operator attestation, not an
+   automated App Store check; no attestation was supplied during this audit.
+3. Obtain the standing coordinated deployment approval, then intentionally
+   integrate the reviewed branch into the actual site's `org/main` publishing
+   branch through the owner's release workflow. Do not overwrite the dirty
+   primary checkout or assume an origin feature-branch push publishes solyxapp.com.
+4. After the authorized deploy, check the public homepage, support, privacy,
+   official Store/Terms links, localized purchase flow and browser rendering.
+
+No launch copy edits remain. The existing motion-accessibility and real-device
+performance limitations below are unchanged and are not Lifetime copy blockers.
+
+Final audit verification: **105 checks passed** (17 preview/content/metadata,
+3 fail-closed gate, 85 browser). New checks reproduced the remaining account FAQ
+and privacy mismatches before the terminology changes, then passed. Desktop and
+mobile account FAQ/privacy captures were inspected; no text overlap was found.
+Evidence is in `qa/lifetime-consistency/`, separate from the parent's reviewed
+initial captures. `AUDIT_OUTPUT=qa/lifetime-consistency node scripts/browser-audit.cjs`
+reproduces the browser evidence without overwriting that initial set.
+
+Follow-up changed paths: `index.html`, `privacy/index.html`,
+`scripts/release-check.cjs`, `scripts/browser-audit.cjs`, `README.md`, this report,
+and `qa/lifetime-consistency/`. Support, legal destinations, approved app images,
+CSS, JavaScript rendering, and the release gate's confirmation requirement did
+not need changes. Existing untracked `.DS_Store` is excluded from the commit.
+
+### Initial release preparation
 
 - Exact thesis: `Your habits build your galaxy.` in hero, title and social/search
   metadata. Copy says `100+ planets. 100+ constellations.`
@@ -78,10 +148,11 @@ approved illustrative galaxy, not a claim of a literal in-app screenshot.
 
 ## Verification
 
-- Eleven local preview regressions pass: exact thesis, catalog counts, final
+- Seventeen local preview regressions pass: exact thesis, catalog counts, final
   pricing/trial/download wording, deferred distant textures, accessible story,
   support/privacy canonical and keyboard entry, Lifetime restore/nonrenewal,
-  privacy terminology/date, and no-JavaScript hero fallback.
+  privacy terminology/date, and no-JavaScript hero fallback, plus purchase-wide
+  analytics, all-route metadata/content scans, and Terms/cancellation checks.
 - Three fail-closed release-gate tests pass: absent, generic `true`, and partial
   `app-live` confirmations all exit 2 before browser checks. New copy/privacy
   assertions and gate tests failed against the previous preparation before the
@@ -188,5 +259,6 @@ to reopen it. Opening the HTML directly shows the static fallback only.
 - `qa/2026-10-11-release/` (browser captures and results)
 - `README.md`, `RELEASE-READINESS-2026-10-11.md`
 
-At this handoff, all preparation is unstaged and uncommitted by this agent.
-The parent may commit after review; deployment remains separately gated.
+The initial preparation was committed by the parent as `5c66db8` and pushed only
+to `origin/website/app-store-launch`. The final consistency follow-up uses the
+same scoped branch; deployment remains separately gated.
