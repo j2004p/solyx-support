@@ -26,6 +26,38 @@ non-publishing branch does not authorize publication.
 
 ## Prepared changes
 
+### October 12 billing disclosure audit
+
+Follow-up baseline: `16a6cb0`, on `website/app-store-launch`. Homepage FAQ and
+download copy now explicitly say subscriptions renew automatically until
+canceled. Support also identifies Lifetime as non-consumable; FAQ and support
+explicitly say no subscription is needed with Lifetime. README records the same
+purchase model. The prepared $79.99 USD price, localized in-app pricing and
+eligible yearly trial remain unchanged.
+
+Privacy, Terms destinations, SEO/share titles, legacy confirmation, robots and
+sitemap required no further changes. Apple's
+[purchase-type definitions](https://developer.apple.com/help/app-store-connect/reference/in-app-purchases-and-subscriptions/in-app-purchase-types/)
+confirm the distinction between a one-time non-consumable and auto-renewing
+subscriptions. This audit does not verify live product availability or pricing.
+
+Verification: strengthened assertions first reproduced three missing disclosure
+failures (14 passed), then all **17 content checks, 3 gate tests and 85 browser
+checks passed**. Browser results report no runtime or HTTP errors across five
+widths. Focused pricing/support captures at 390px and 1440px were inspected with
+readable wrapping and no overlap. Fresh evidence is in
+`qa/2026-10-12-lifetime-billing/`; use that path as `AUDIT_OUTPUT` to reproduce.
+Both edited test scripts pass Node syntax checks. The default release check,
+with confirmation unset, still exits 2; no valid gate attestation was supplied.
+
+Owner steps remain: independently verify the app and Lifetime are actually live,
+the USD/local prices and production purchase/restore/access paths are correct,
+and existing subscribers retain access. Only then run the attested release check
+and authorize integration into the actual publishing branch, `org/main`, followed
+by public-site verification. Neither publishing branch is a push target for this
+audit. No deployment, marketing-chat message, Store change or native action was
+performed; the dirty primary checkout and untracked `.DS_Store` remain untouched.
+
 ### Final Lifetime consistency audit
 
 The follow-up begins at parent-reviewed commit `5c66db8`. The only remaining

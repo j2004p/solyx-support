@@ -61,6 +61,9 @@ let browser;
       assert.match(await page.locator('details[open]').innerText(), /\$79\.99 USD/);
     });
     if ([390, 1440].includes(width)) {
+      const pricing = `pricing-${width}.png`;
+      await page.locator('.questions').screenshot({ path: path.join(output, pricing) });
+      report.screenshots.push(pricing);
       const file = `full-${width}.jpg`;
       await page.screenshot({ path: path.join(output, file), fullPage: true, type: 'jpeg', quality: 80 });
       report.screenshots.push(file);
@@ -72,6 +75,11 @@ let browser;
         assert.equal(await page.locator('h1').count(), 1);
         assert.equal(await page.locator('main').count(), 1);
       });
+      if (route === '/support/' && [390, 1440].includes(width)) {
+        const file = `support-${width}.png`;
+        await page.locator('main').screenshot({ path: path.join(output, file) });
+        report.screenshots.push(file);
+      }
     }
     await page.close();
   }

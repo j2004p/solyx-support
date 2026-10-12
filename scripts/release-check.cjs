@@ -40,11 +40,14 @@ const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4186';
     assert.match(text, /local currency/);
     assert.doesNotMatch(text, /forthcoming|coming soon|not available yet/i);
     assert.match(text.replace(/\s+/g, ' '), /Eligible new subscribers can try the yearly plan free for 7 days/);
+    assert.match(text, /Monthly and yearly subscriptions renew automatically until canceled/);
+    assert.match(text, /You do not need a subscription with Lifetime/);
   });
   await check('download note is final launch copy', async () => {
     const text = await page.locator('.subscription-note').textContent();
     assert.match(text, /Monthly, yearly, or Lifetime/);
     assert.match(text, /\$79\.99 USD/);
+    assert.match(text, /Subscriptions renew automatically until canceled/);
     assert.doesNotMatch(text, /forthcoming|coming|not available yet/i);
   });
   await check('account FAQ includes purchase analytics rather than subscription-only analytics', async () => {
@@ -70,6 +73,9 @@ const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4186';
       assert.match(text, /Restore Purchases.*subscription or Lifetime purchase/);
       assert.match(text, /\$79\.99 USD/);
       assert.match(text, /does not renew/);
+      assert.match(text, /Monthly and yearly subscriptions renew automatically until canceled/);
+      assert.match(text, /non-consumable/);
+      assert.match(text, /You do not need a subscription with Lifetime/);
       assert.doesNotMatch(text, /forthcoming|not available yet/i);
     });
     if (route === 'privacy') await check('privacy purchase terminology preserves effective date', async () => {
@@ -88,6 +94,7 @@ const base = process.env.PREVIEW_URL || 'http://127.0.0.1:4186';
     await page.goto(base + route);
     await check(`${route} content and metadata have no subscription-only product claims`, async () => {
       const text = await page.evaluate(() => [
+        document.title,
         document.body.textContent,
         ...[...document.querySelectorAll('meta[content]')].map(el => el.content),
         ...[...document.querySelectorAll('script[type="application/ld+json"]')].map(el => JSON.stringify(JSON.parse(el.textContent))),

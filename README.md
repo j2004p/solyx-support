@@ -28,6 +28,14 @@ For a local browser preview, run `node scripts/preview.mjs` and open `http://127
 - Legacy confirmation URL: `/confirmed/` (generic product introduction)
 - Terms: Apple's standard EULA
 
+## Purchase Copy
+
+Monthly and yearly plans are auto-renewing subscriptions until canceled.
+Lifetime is a $79.99 USD one-time, non-consumable purchase that does not renew;
+no subscription is needed with Lifetime. Local prices and full purchase terms
+are shown in the app. The 7-day yearly trial is for eligible new subscribers,
+not Lifetime. This describes the prepared release, not verified live availability.
+
 ## Launch
 
 Solyx is live on the App Store. Download links are in the HTML so they work even without JavaScript. App ID: `6775335663`. Apple's official badge is stored at `assets/app-store-badge.svg`.
